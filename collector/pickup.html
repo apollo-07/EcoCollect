@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>In-Field Pickup Workflow — EcoCollect</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- App CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/forms.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <style>
+        .collector-nav-map-box {
+            height: 380px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" style="display:flex; align-items:center; gap:0.75rem; text-decoration:none;">
+                    <div class="brand-logo-icon"><i class="fa-solid fa-recycle"></i></div>
+                    <div class="brand-text">Eco<span>Collect</span></div>
+                </a>
+                <span class="sidebar-role-tag" style="background:#CCFBF1; color:#0F766E;">Collector</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-label">Fleet Operations</div>
+                <a href="dashboard.html" class="nav-link">
+                    <i class="fa-solid fa-gauge-high"></i> Dashboard
+                </a>
+                <a href="requests.html" class="nav-link">
+                    <i class="fa-solid fa-clipboard-list"></i> Pickup Queue
+                </a>
+                <a href="pickup.html" class="nav-link active">
+                    <i class="fa-solid fa-truck-ramp-box"></i> Active Navigation
+                </a>
+
+                <div class="nav-label">Account & Fleet</div>
+                <a href="profile.html" class="nav-link">
+                    <i class="fa-solid fa-id-badge"></i> Vehicle & Profile
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-mini-card" onclick="window.location.href='profile.html'">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" class="user-mini-avatar user-display-avatar" alt="Collector">
+                    <div class="user-mini-info">
+                        <div class="user-mini-name user-display-name">Rajesh Kumar</div>
+                        <div class="user-mini-role user-display-role">Certified Agent</div>
+                    </div>
+                    <button class="btn btn-icon btn-sm btn-outline" onclick="event.stopPropagation(); logout();" title="Logout">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <header class="app-header">
+                <div class="header-left">
+                    <button class="mobile-nav-toggle" aria-label="Toggle Navigation">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div style="font-weight:700; font-size:1.1rem; color:var(--text-main);">
+                        In-Field Collection & Weighing Workflow
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <a href="dashboard.html" class="btn btn-outline btn-sm">Collector Console</a>
+                </div>
+            </header>
+
+            <div class="app-content" id="collector-pickup-workflow-container">
+                <div class="page-header" style="margin-bottom:1.5rem;">
+                    <div>
+                        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.25rem;">
+                            <h1 class="page-title" style="margin:0;">Active Pickup Task</h1>
+                            <code style="font-size:1.15rem; font-weight:800; color:var(--primary);" id="pickup-workflow-id">EC-2026-000001</code>
+                            <span class="badge" id="pickup-workflow-status">ON THE WAY</span>
+                        </div>
+                        <p class="page-subtitle" id="pickup-device-info">Loading item details...</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Map & Workflow Controls Grid -->
+                <div class="dashboard-grid-2">
+                    <!-- Left: Navigation Map -->
+                    <div>
+                        <div class="collector-nav-map-box" id="collector-nav-map">
+                            <!-- Injected by Leaflet -->
+                        </div>
+
+                        <!-- Status Action Milestone Bar -->
+                        <div class="content-card" style="margin-top:1.25rem; padding:1.25rem;">
+                            <h4 style="font-size:0.85rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin-bottom:0.75rem;">
+                                Dispatch Milestones
+                            </h4>
+                            <div style="display:flex; gap:0.65rem; flex-wrap:wrap;">
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="btn-status-ontheway">
+                                    <i class="fa-solid fa-truck-fast"></i> Mark "On The Way"
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="btn-status-arrived">
+                                    <i class="fa-solid fa-location-dot"></i> Log "Arrived at Doorstep"
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Customer Details & Weight Verification Card -->
+                    <div class="content-card">
+                        <div class="content-card-header">
+                            <h3 class="content-card-title"><i class="fa-solid fa-user"></i> Customer & Handover</h3>
+                        </div>
+                        <div class="content-card-body">
+                            <!-- Customer Info -->
+                            <div style="background:#F8FAFC; border:1px solid var(--border-color); border-radius:var(--radius-md); padding:1rem; margin-bottom:1.25rem;">
+                                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.5rem;">
+                                    <strong style="font-size:1.05rem; color:var(--text-main);" id="pickup-cust-name">-</strong>
+                                    <a href="#" id="pickup-cust-phone" class="btn btn-sm btn-outline-primary"><i class="fa-solid fa-phone"></i> Call</a>
+                                </div>
+                                <div style="font-size:0.825rem; color:var(--text-muted); line-height:1.4;" id="pickup-cust-address">-</div>
+                                <div style="font-size:0.8rem; color:#B45309; margin-top:0.5rem; background:#FEF3C7; padding:0.4rem 0.6rem; border-radius:var(--radius-sm);" id="pickup-notes-info">
+                                    -
+                                </div>
+                            </div>
+
+                            <!-- Digital Weighing Form -->
+                            <div style="border-top:1px solid var(--border-color); padding-top:1.25rem;">
+                                <h4 style="font-size:0.95rem; font-weight:700; color:var(--text-main); margin-bottom:0.5rem;">
+                                    Digital Scale Verification
+                                </h4>
+                                <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1rem;" id="pickup-weight-info">
+                                    Reported: 2.2 kg
+                                </p>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="actual-collected-weight">
+                                        Actual Weighed Quantity (kg) <span class="required">*</span>
+                                    </label>
+                                    <input type="number" id="actual-collected-weight" class="form-control" step="0.1" min="0.1" value="2.2" required>
+                                    <span class="form-helper">Readings from certified calibrated portable scale.</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Collection Proof Photo</label>
+                                    <div style="border:1px dashed var(--border-color); border-radius:var(--radius-md); padding:0.75rem; text-align:center; background:#F8FAFC; font-size:0.8rem; color:var(--text-muted);">
+                                        <i class="fa-solid fa-camera" style="font-size:1.25rem; color:var(--primary); margin-bottom:0.25rem; display:block;"></i>
+                                        Photo proof logged upon completion.
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-primary btn-lg" style="width:100%; margin-top:0.5rem;" id="btn-status-complete">
+                                    <i class="fa-solid fa-circle-check"></i> Complete Pickup & Rate Citizen
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- App Scripts -->
+    <script src="../js/storage.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/collector.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initCollectorPickupWorkflow();
+        });
+    </script>
+</body>
+</html>

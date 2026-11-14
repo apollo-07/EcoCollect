@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule E-Waste Pickup — EcoCollect</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- App CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/forms.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" style="display:flex; align-items:center; gap:0.75rem; text-decoration:none;">
+                    <div class="brand-logo-icon"><i class="fa-solid fa-recycle"></i></div>
+                    <div class="brand-text">Eco<span>Collect</span></div>
+                </a>
+                <span class="sidebar-role-tag">Citizen</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-label">Main Menu</div>
+                <a href="dashboard.html" class="nav-link">
+                    <i class="fa-solid fa-gauge-high"></i> Dashboard
+                </a>
+                <a href="request.html" class="nav-link active">
+                    <i class="fa-solid fa-calendar-plus"></i> Request Pickup
+                </a>
+                <a href="requests.html" class="nav-link">
+                    <i class="fa-solid fa-boxes-packing"></i> My Requests
+                </a>
+                <a href="tracking.html" class="nav-link">
+                    <i class="fa-solid fa-location-crosshairs"></i> Track Pickup
+                </a>
+
+                <div class="nav-label">Account & Impact</div>
+                <a href="rewards.html" class="nav-link">
+                    <i class="fa-solid fa-gift"></i> Rewards & Points
+                </a>
+                <a href="rating.html" class="nav-link">
+                    <i class="fa-solid fa-star"></i> Ratings & Feedback
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="fa-solid fa-user-gear"></i> Profile
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-mini-card" onclick="window.location.href='profile.html'">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" class="user-mini-avatar user-display-avatar" alt="User">
+                    <div class="user-mini-info">
+                        <div class="user-mini-name user-display-name">Priya Sharma</div>
+                        <div class="user-mini-role user-display-role">Citizen Member</div>
+                    </div>
+                    <button class="btn btn-icon btn-sm btn-outline" onclick="event.stopPropagation(); logout();" title="Logout">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <header class="app-header">
+                <div class="header-left">
+                    <button class="mobile-nav-toggle" aria-label="Toggle Navigation">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div style="font-weight:700; font-size:1.1rem; color:var(--text-main);">
+                        Doorstep E-Waste Collection Request
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <div class="notif-dropdown-wrapper">
+                        <button class="notif-bell-btn" id="notif-bell-btn">
+                            <i class="fa-regular fa-bell"></i>
+                            <span class="notif-badge" id="notif-badge" style="display:none;">0</span>
+                        </button>
+                        <div class="notif-dropdown" id="notif-dropdown">
+                            <div class="notif-header">
+                                <span class="notif-header-title">Notifications</span>
+                                <button class="btn btn-sm btn-outline" onclick="markAllNotificationsRead()" style="font-size:0.75rem;">Mark all read</button>
+                            </div>
+                            <div class="notif-list" id="notif-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="app-content">
+                <div style="max-width: 820px; margin: 0 auto;">
+                    <!-- Wizard Header -->
+                    <div style="text-align:center; margin-bottom: 2rem;">
+                        <h1 class="page-title">Request E-Waste Pickup</h1>
+                        <p class="page-subtitle">Schedule certified doorstep collection in 4 structured steps.</p>
+                    </div>
+
+                    <!-- Wizard Progress Stepper -->
+                    <div class="wizard-progress">
+                        <div class="wizard-progress-bar" id="wizard-progress-bar"></div>
+
+                        <div class="wizard-step active" data-step="1">
+                            <div class="wizard-step-circle">1</div>
+                            <div class="wizard-step-label">E-Waste Details</div>
+                        </div>
+
+                        <div class="wizard-step" data-step="2">
+                            <div class="wizard-step-circle">2</div>
+                            <div class="wizard-step-label">Pickup Location</div>
+                        </div>
+
+                        <div class="wizard-step" data-step="3">
+                            <div class="wizard-step-circle">3</div>
+                            <div class="wizard-step-label">Schedule Slot</div>
+                        </div>
+
+                        <div class="wizard-step" data-step="4">
+                            <div class="wizard-step-circle">4</div>
+                            <div class="wizard-step-label">Review & Confirm</div>
+                        </div>
+                    </div>
+
+                    <!-- Wizard Form Container -->
+                    <div class="content-card" style="padding: 2.25rem;">
+
+                        <!-- STEP 1: E-WASTE DETAILS -->
+                        <div class="wizard-step-pane active" id="wizard-pane-1">
+                            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem;">
+                                Step 1 — E-Waste Details & AI Analysis
+                            </h3>
+
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label class="form-label" for="ewaste-category">
+                                        E-Waste Category <span class="required">*</span>
+                                    </label>
+                                    <select id="ewaste-category" class="form-control" required>
+                                        <option value="Mobile Phone">Mobile Phone (+20 Pts)</option>
+                                        <option value="Laptop" selected>Laptop (+50 Pts)</option>
+                                        <option value="Desktop">Desktop (+60 Pts)</option>
+                                        <option value="Monitor">Monitor (+40 Pts)</option>
+                                        <option value="Television">Television (+80 Pts)</option>
+                                        <option value="Refrigerator">Refrigerator (+100 Pts)</option>
+                                        <option value="Washing Machine">Washing Machine (+90 Pts)</option>
+                                        <option value="Printer">Printer (+35 Pts)</option>
+                                        <option value="Keyboard">Keyboard (+10 Pts)</option>
+                                        <option value="Mouse">Mouse (+10 Pts)</option>
+                                        <option value="Battery">Battery (+30 Pts)</option>
+                                        <option value="Charger">Charger (+15 Pts)</option>
+                                        <option value="Other">Other Electronics (+25 Pts)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="device-name">
+                                        Device Name / Model <span class="required">*</span>
+                                    </label>
+                                    <input type="text" id="device-name" class="form-control" placeholder="E.g. Lenovo ThinkPad T480 or Sony TV" value="Dell Inspiron 15" required>
+                                </div>
+                            </div>
+
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label class="form-label" for="device-quantity">
+                                        Quantity <span class="required">*</span>
+                                    </label>
+                                    <input type="number" id="device-quantity" class="form-control" min="1" max="50" value="1" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="estimated-weight">
+                                        Estimated Weight (kg) <span class="required">*</span>
+                                    </label>
+                                    <input type="number" id="estimated-weight" class="form-control" step="0.1" min="0.1" value="2.2" required>
+                                    <span class="form-helper">Calibrated digital scale will verify actual weight upon pickup.</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Working Condition <span class="required">*</span></label>
+                                <div class="condition-picker">
+                                    <div class="condition-option" data-condition="Working">
+                                        <i class="fa-solid fa-power-off" style="color:var(--primary); font-size:1.1rem; margin-bottom:0.25rem; display:block;"></i>
+                                        Working
+                                    </div>
+                                    <div class="condition-option selected" data-condition="Partially Working">
+                                        <i class="fa-solid fa-triangle-exclamation" style="color:#F59E0B; font-size:1.1rem; margin-bottom:0.25rem; display:block;"></i>
+                                        Partially Working
+                                    </div>
+                                    <div class="condition-option" data-condition="Not Working">
+                                        <i class="fa-solid fa-circle-xmark" style="color:#EF4444; font-size:1.1rem; margin-bottom:0.25rem; display:block;"></i>
+                                        Not Working
+                                    </div>
+                                    <div class="condition-option" data-condition="Damaged">
+                                        <i class="fa-solid fa-burst" style="color:#64748B; font-size:1.1rem; margin-bottom:0.25rem; display:block;"></i>
+                                        Damaged
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Upload Device Image with AI Scanner -->
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <span>Upload Device Image <span class="required">*</span></span>
+                                    <span class="badge badge-secondary" style="font-size:0.7rem;"><i class="fa-solid fa-robot"></i> AI Classification Enabled</span>
+                                </label>
+
+                                <div class="dropzone" id="device-image-dropzone">
+                                    <input type="file" id="device-image-input" accept="image/*" style="display:none;">
+                                    <div class="dropzone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                                    <div class="dropzone-title">Click or Drag & Drop Device Photo Here</div>
+                                    <div class="dropzone-desc">JPG, PNG or WEBP (Simulates AI Vision detection of hazardous components)</div>
+                                </div>
+
+                                <div class="image-preview-container" id="image-preview-container">
+                                    <img id="image-preview-img" src="" alt="Preview">
+                                    <button type="button" class="image-preview-remove" id="image-preview-remove" title="Remove">&times;</button>
+                                </div>
+
+                                <!-- AI Classification Results Card -->
+                                <div class="ai-classifier-card" id="ai-classifier-card">
+                                    <!-- Injected by ai-classification.js -->
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content: flex-end; margin-top: 2rem;">
+                                <button type="button" class="btn btn-primary btn-wizard-next">
+                                    Next: Select Location <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- STEP 2: PICKUP LOCATION -->
+                        <div class="wizard-step-pane" id="wizard-pane-2">
+                            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem;">
+                                Step 2 — Doorstep Pickup Location
+                            </h3>
+
+                            <div class="form-group">
+                                <label class="form-label" for="pickup-address">Street / Flat / House Address <span class="required">*</span></label>
+                                <input type="text" id="pickup-address" class="form-control" placeholder="E.g. Flat 402, Green Acres Apt, 12th Main Rd" required>
+                            </div>
+
+                            <div class="form-grid-3">
+                                <div class="form-group">
+                                    <label class="form-label" for="pickup-area">Area / Neighborhood</label>
+                                    <input type="text" id="pickup-area" class="form-control" placeholder="Indiranagar">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="pickup-zone">City Zone <span class="required">*</span></label>
+                                    <select id="pickup-zone" class="form-control" required>
+                                        <option value="East Zone">East Zone</option>
+                                        <option value="South Zone">South Zone</option>
+                                        <option value="Central Zone">Central Zone</option>
+                                        <option value="West Zone">West Zone</option>
+                                        <option value="North Zone">North Zone</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="pickup-pincode">Pincode <span class="required">*</span></label>
+                                    <input type="text" id="pickup-pincode" class="form-control" placeholder="560038" maxlength="6" required>
+                                </div>
+                            </div>
+
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-top:1rem; margin-bottom:0.5rem;">
+                                <label class="form-label" style="margin-bottom:0;">
+                                    <i class="fa-solid fa-map-pin" style="color:var(--primary);"></i> Pinpoint on Interactive Map:
+                                </label>
+                                <button type="button" class="btn btn-sm btn-outline-primary" id="btn-get-gps">
+                                    <i class="fa-solid fa-location-crosshairs"></i> Use GPS Location
+                                </button>
+                            </div>
+
+                            <!-- Interactive Map Location Picker -->
+                            <div class="map-picker-container" id="pickup-map">
+                                <div class="map-crosshair-hint">
+                                    <i class="fa-solid fa-hand-pointer"></i> Click map or drag green pin to refine location
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+                                <button type="button" class="btn btn-outline btn-wizard-prev">
+                                    <i class="fa-solid fa-arrow-left"></i> Previous
+                                </button>
+                                <button type="button" class="btn btn-primary btn-wizard-next">
+                                    Next: Select Schedule <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- STEP 3: SCHEDULE -->
+                        <div class="wizard-step-pane" id="wizard-pane-3">
+                            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem;">
+                                Step 3 — Preferred Date & Time Slot
+                            </h3>
+
+                            <div class="form-group">
+                                <label class="form-label" for="pickup-date">Preferred Pickup Date <span class="required">*</span></label>
+                                <input type="date" id="pickup-date" class="form-control" style="max-width: 300px;" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Available Time Windows <span class="required">*</span></label>
+                                <div class="time-slot-grid">
+                                    <div class="time-slot-pill selected" data-slot="09:00 AM – 12:00 PM">
+                                        <i class="fa-regular fa-sun time-slot-icon"></i>
+                                        <strong>Morning Slot</strong>
+                                        <div style="font-size:0.775rem; color:var(--text-muted); margin-top:2px;">09:00 AM – 12:00 PM</div>
+                                    </div>
+
+                                    <div class="time-slot-pill" data-slot="12:00 PM – 03:00 PM">
+                                        <i class="fa-solid fa-sun time-slot-icon"></i>
+                                        <strong>Afternoon Slot</strong>
+                                        <div style="font-size:0.775rem; color:var(--text-muted); margin-top:2px;">12:00 PM – 03:00 PM</div>
+                                    </div>
+
+                                    <div class="time-slot-pill" data-slot="03:00 PM – 06:00 PM">
+                                        <i class="fa-solid fa-cloud-sun time-slot-icon"></i>
+                                        <strong>Evening Slot</strong>
+                                        <div style="font-size:0.775rem; color:var(--text-muted); margin-top:2px;">03:00 PM – 06:00 PM</div>
+                                    </div>
+
+                                    <div class="time-slot-pill" data-slot="06:00 PM – 08:00 PM">
+                                        <i class="fa-solid fa-moon time-slot-icon"></i>
+                                        <strong>Late Evening</strong>
+                                        <div style="font-size:0.775rem; color:var(--text-muted); margin-top:2px;">06:00 PM – 08:00 PM</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="pickup-notes">Special Instructions (Optional)</label>
+                                <textarea id="pickup-notes" class="form-control" placeholder="E.g. Call 10 mins ahead; elevator available; devices packed in a cardboard box."></textarea>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+                                <button type="button" class="btn btn-outline btn-wizard-prev">
+                                    <i class="fa-solid fa-arrow-left"></i> Previous
+                                </button>
+                                <button type="button" class="btn btn-primary btn-wizard-next">
+                                    Next: Review Request <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- STEP 4: REVIEW & CONFIRM -->
+                        <div class="wizard-step-pane" id="wizard-pane-4">
+                            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem;">
+                                Step 4 — Review & Confirm Pickup
+                            </h3>
+
+                            <p style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                                Please review your e-waste collection booking details below. Upon confirmation, our smart routing algorithm will automatically dispatch the best-fit certified collection agent.
+                            </p>
+
+                            <!-- Injected Summary Breakdown -->
+                            <div class="review-summary-card" id="review-summary-details">
+                                <!-- Injected dynamically -->
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+                                <button type="button" class="btn btn-outline btn-wizard-prev">
+                                    <i class="fa-solid fa-arrow-left"></i> Edit Details
+                                </button>
+                                <button type="button" class="btn btn-primary btn-lg" id="btn-confirm-pickup">
+                                    <i class="fa-solid fa-circle-check"></i> Confirm Pickup & Assign Collector
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- App Scripts -->
+    <script src="../js/storage.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/ai-classification.js"></script>
+    <script src="../js/request.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initRequestWizard();
+        });
+    </script>
+</body>
+</html>

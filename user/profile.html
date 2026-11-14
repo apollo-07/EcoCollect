@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Citizen Profile — EcoCollect</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- App CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/forms.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" style="display:flex; align-items:center; gap:0.75rem; text-decoration:none;">
+                    <div class="brand-logo-icon"><i class="fa-solid fa-recycle"></i></div>
+                    <div class="brand-text">Eco<span>Collect</span></div>
+                </a>
+                <span class="sidebar-role-tag">Citizen</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-label">Main Menu</div>
+                <a href="dashboard.html" class="nav-link">
+                    <i class="fa-solid fa-gauge-high"></i> Dashboard
+                </a>
+                <a href="request.html" class="nav-link">
+                    <i class="fa-solid fa-calendar-plus"></i> Request Pickup
+                </a>
+                <a href="requests.html" class="nav-link">
+                    <i class="fa-solid fa-boxes-packing"></i> My Requests
+                </a>
+                <a href="tracking.html" class="nav-link">
+                    <i class="fa-solid fa-location-crosshairs"></i> Track Pickup
+                </a>
+
+                <div class="nav-label">Account & Impact</div>
+                <a href="rewards.html" class="nav-link">
+                    <i class="fa-solid fa-gift"></i> Rewards & Points
+                </a>
+                <a href="rating.html" class="nav-link">
+                    <i class="fa-solid fa-star"></i> Ratings & Feedback
+                </a>
+                <a href="profile.html" class="nav-link active">
+                    <i class="fa-solid fa-user-gear"></i> Profile
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-mini-card" onclick="window.location.href='profile.html'">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" class="user-mini-avatar user-display-avatar" alt="User">
+                    <div class="user-mini-info">
+                        <div class="user-mini-name user-display-name">Priya Sharma</div>
+                        <div class="user-mini-role user-display-role">Citizen Member</div>
+                    </div>
+                    <button class="btn btn-icon btn-sm btn-outline" onclick="event.stopPropagation(); logout();" title="Logout">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <header class="app-header">
+                <div class="header-left">
+                    <button class="mobile-nav-toggle" aria-label="Toggle Navigation">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div style="font-weight:700; font-size:1.1rem; color:var(--text-main);">
+                        Citizen Profile & Settings
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <button class="btn btn-outline-primary btn-sm" onclick="showToast('Certificate Ready', 'Eco-Citizen Verified badge downloaded!', 'success');">
+                        <i class="fa-solid fa-certificate"></i> Verified Citizen Certificate
+                    </button>
+                </div>
+            </header>
+
+            <div class="app-content">
+                <div style="max-width: 720px; margin: 0 auto;">
+                    <div class="page-header" style="margin-bottom:1.5rem;">
+                        <div>
+                            <h1 class="page-title">Personal Profile</h1>
+                            <p class="page-subtitle">Manage your default pickup address and metropolitan zone preference.</p>
+                        </div>
+                    </div>
+
+                    <div class="content-card" style="padding: 2.25rem;">
+                        <form id="user-profile-form">
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label class="form-label" for="profile-name">Full Name <span class="required">*</span></label>
+                                    <input type="text" id="profile-name" class="form-control" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="profile-phone">Phone Number <span class="required">*</span></label>
+                                    <input type="tel" id="profile-phone" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="profile-email">Email Address</label>
+                                <input type="email" id="profile-email" class="form-control" disabled style="background:#F1F5F9; color:#64748B;">
+                                <span class="form-helper">Account email is registered as your primary login identity.</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="profile-address">Default Pickup Address</label>
+                                <input type="text" id="profile-address" class="form-control" placeholder="Apartment / House, Street, Landmark">
+                            </div>
+
+                            <div class="form-grid-3">
+                                <div class="form-group">
+                                    <label class="form-label" for="profile-area">Locality / Area</label>
+                                    <input type="text" id="profile-area" class="form-control" placeholder="Indiranagar">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="profile-zone">City Zone</label>
+                                    <select id="profile-zone" class="form-control">
+                                        <option value="East Zone">East Zone</option>
+                                        <option value="South Zone">South Zone</option>
+                                        <option value="Central Zone">Central Zone</option>
+                                        <option value="West Zone">West Zone</option>
+                                        <option value="North Zone">North Zone</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="profile-pincode">Postal Pincode</label>
+                                    <input type="text" id="profile-pincode" class="form-control" placeholder="560038" maxlength="6">
+                                </div>
+                            </div>
+
+                            <div style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save Profile Details
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/storage.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/user.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initUserProfile();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collector Pickup Queue — EcoCollect</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- App CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/tables.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" style="display:flex; align-items:center; gap:0.75rem; text-decoration:none;">
+                    <div class="brand-logo-icon"><i class="fa-solid fa-recycle"></i></div>
+                    <div class="brand-text">Eco<span>Collect</span></div>
+                </a>
+                <span class="sidebar-role-tag" style="background:#CCFBF1; color:#0F766E;">Collector</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-label">Fleet Operations</div>
+                <a href="dashboard.html" class="nav-link">
+                    <i class="fa-solid fa-gauge-high"></i> Dashboard
+                </a>
+                <a href="requests.html" class="nav-link active">
+                    <i class="fa-solid fa-clipboard-list"></i> Pickup Queue
+                </a>
+                <a href="pickup.html" class="nav-link">
+                    <i class="fa-solid fa-truck-ramp-box"></i> Active Navigation
+                </a>
+
+                <div class="nav-label">Account & Fleet</div>
+                <a href="profile.html" class="nav-link">
+                    <i class="fa-solid fa-id-badge"></i> Vehicle & Profile
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-mini-card" onclick="window.location.href='profile.html'">
+                    <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" class="user-mini-avatar user-display-avatar" alt="Collector">
+                    <div class="user-mini-info">
+                        <div class="user-mini-name user-display-name">Rajesh Kumar</div>
+                        <div class="user-mini-role user-display-role">Certified Agent</div>
+                    </div>
+                    <button class="btn btn-icon btn-sm btn-outline" onclick="event.stopPropagation(); logout();" title="Logout">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <header class="app-header">
+                <div class="header-left">
+                    <button class="mobile-nav-toggle" aria-label="Toggle Navigation">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div style="font-weight:700; font-size:1.1rem; color:var(--text-main);">
+                        Fleet Pickup Tasks Queue
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <a href="pickup.html" class="btn btn-primary btn-sm">
+                        <i class="fa-solid fa-truck-ramp-box"></i> Open Active Pickup
+                    </a>
+                </div>
+            </header>
+
+            <div class="app-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Pickup Task Queue</h1>
+                        <p class="page-subtitle">Inspect assigned customer requests and unassigned pickups in your regional route.</p>
+                    </div>
+                </div>
+
+                <!-- Assigned Pickups -->
+                <div class="content-card" style="margin-bottom: 2rem;">
+                    <div class="content-card-header">
+                        <h3 class="content-card-title"><i class="fa-solid fa-list-check" style="color:var(--primary);"></i> Assigned Pickup Requests</h3>
+                    </div>
+                    <div class="data-table-scroll">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Request ID</th>
+                                    <th>Citizen / Customer</th>
+                                    <th>E-Waste Items</th>
+                                    <th>Doorstep Address</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="collector-assigned-requests-tbody">
+                                <!-- Injected by collector.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Available in Zone -->
+                <div class="content-card">
+                    <div class="content-card-header">
+                        <h3 class="content-card-title"><i class="fa-solid fa-hand-holding-hand" style="color:var(--secondary);"></i> Available Pickups in Your Zone</h3>
+                    </div>
+                    <div class="data-table-scroll">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Request ID</th>
+                                    <th>E-Waste Details</th>
+                                    <th>Locality</th>
+                                    <th>Status</th>
+                                    <th>Claim</th>
+                                </tr>
+                            </thead>
+                            <tbody id="collector-available-requests-tbody">
+                                <!-- Injected by collector.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/storage.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/collector.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initCollectorDashboard();
+        });
+    </script>
+</body>
+</html>

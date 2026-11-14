@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Pickup Requests — EcoCollect</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- App CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/tables.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" style="display:flex; align-items:center; gap:0.75rem; text-decoration:none;">
+                    <div class="brand-logo-icon"><i class="fa-solid fa-recycle"></i></div>
+                    <div class="brand-text">Eco<span>Collect</span></div>
+                </a>
+                <span class="sidebar-role-tag">Citizen</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-label">Main Menu</div>
+                <a href="dashboard.html" class="nav-link">
+                    <i class="fa-solid fa-gauge-high"></i> Dashboard
+                </a>
+                <a href="request.html" class="nav-link">
+                    <i class="fa-solid fa-calendar-plus"></i> Request Pickup
+                </a>
+                <a href="requests.html" class="nav-link active">
+                    <i class="fa-solid fa-boxes-packing"></i> My Requests
+                </a>
+                <a href="tracking.html" class="nav-link">
+                    <i class="fa-solid fa-location-crosshairs"></i> Track Pickup
+                </a>
+
+                <div class="nav-label">Account & Impact</div>
+                <a href="rewards.html" class="nav-link">
+                    <i class="fa-solid fa-gift"></i> Rewards & Points
+                </a>
+                <a href="rating.html" class="nav-link">
+                    <i class="fa-solid fa-star"></i> Ratings & Feedback
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="fa-solid fa-user-gear"></i> Profile
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-mini-card" onclick="window.location.href='profile.html'">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100" class="user-mini-avatar user-display-avatar" alt="User">
+                    <div class="user-mini-info">
+                        <div class="user-mini-name user-display-name">Priya Sharma</div>
+                        <div class="user-mini-role user-display-role">Citizen Member</div>
+                    </div>
+                    <button class="btn btn-icon btn-sm btn-outline" onclick="event.stopPropagation(); logout();" title="Logout">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <header class="app-header">
+                <div class="header-left">
+                    <button class="mobile-nav-toggle" aria-label="Toggle Navigation">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div style="font-weight:700; font-size:1.1rem; color:var(--text-main);">
+                        My Pickup History
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <div class="notif-dropdown-wrapper">
+                        <button class="notif-bell-btn" id="notif-bell-btn">
+                            <i class="fa-regular fa-bell"></i>
+                            <span class="notif-badge" id="notif-badge" style="display:none;">0</span>
+                        </button>
+                        <div class="notif-dropdown" id="notif-dropdown">
+                            <div class="notif-header">
+                                <span class="notif-header-title">Notifications</span>
+                                <button class="btn btn-sm btn-outline" onclick="markAllNotificationsRead()" style="font-size:0.75rem;">Mark all read</button>
+                            </div>
+                            <div class="notif-list" id="notif-list"></div>
+                        </div>
+                    </div>
+
+                    <a href="request.html" class="btn btn-primary btn-sm">
+                        <i class="fa-solid fa-plus"></i> Schedule Pickup
+                    </a>
+                </div>
+            </header>
+
+            <div class="app-content">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">My Pickup Requests</h1>
+                        <p class="page-subtitle">Track status, inspect assigned collectors, and review completion records.</p>
+                    </div>
+                    <span class="badge badge-primary" id="user-requests-count">0 Requests</span>
+                </div>
+
+                <!-- Table Filters Toolbar -->
+                <div class="table-toolbar">
+                    <div class="table-filters">
+                        <div class="filter-search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" class="filter-search-input" id="filter-request-search" placeholder="Search by device, category or ID...">
+                        </div>
+
+                        <select class="filter-select" id="filter-request-status">
+                            <option value="ALL">All Statuses</option>
+                            <option value="REQUESTED">Requested (Unassigned)</option>
+                            <option value="ASSIGNED">Assigned</option>
+                            <option value="ACCEPTED">Accepted</option>
+                            <option value="ON_THE_WAY">On The Way</option>
+                            <option value="ARRIVED">Arrived</option>
+                            <option value="COLLECTED">Collected</option>
+                            <option value="COMPLETED">Completed</option>
+                            <option value="CANCELLED">Cancelled</option>
+                        </select>
+                    </div>
+
+                    <a href="request.html" class="btn btn-primary btn-sm">
+                        <i class="fa-solid fa-calendar-plus"></i> Schedule New Pickup
+                    </a>
+                </div>
+
+                <!-- Data Table -->
+                <div class="data-table-container">
+                    <div class="data-table-scroll">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Request ID</th>
+                                    <th>E-Waste Device</th>
+                                    <th>Weight / Condition</th>
+                                    <th>Scheduled Slot</th>
+                                    <th>Status</th>
+                                    <th>Assigned Collector</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="all-user-requests-tbody">
+                                <!-- Injected dynamically by user.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/storage.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/user.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initUserRequestsPage();
+        });
+    </script>
+</body>
+</html>
