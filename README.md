@@ -1,5 +1,10 @@
 # EcoCollect — Smart Metropolitan E-Waste Collection Platform
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-16A34A?style=for-the-badge&logo=github)](https://apollo-07.github.io/EcoCollect/)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-1E293B?style=for-the-badge&logo=github)](https://github.com/apollo-07/EcoCollect)
+
+🌐 **Public Live URL:** [https://apollo-07.github.io/EcoCollect/](https://apollo-07.github.io/EcoCollect/)
+
 ![EcoCollect Platform](https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1200&auto=format&fit=crop&q=80)
 
 **EcoCollect** is a modern, responsive web application engineered to organize, streamline, and optimize electronic waste (e-waste) collection in metropolitan cities. The platform seamlessly bridges citizens seeking to dispose of obsolete electronics with certified collection agents and R2/ISO-certified recycling processing facilities.
